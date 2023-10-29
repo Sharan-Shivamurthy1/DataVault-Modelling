@@ -1,0 +1,54 @@
+ Shopify DataVault Links
+ Links are a critical component of the Data Vault methodology, providing a structured approach to representing and managing 
+ relationships between business entities. They support data integrity, flexibility in modeling, and efficient storage and retrieval
+ of relationship information. This makes them an essential building block for effective data management and analysis.
+
+ 
+ create or replace TABLE BREEZY.B_DV_SHOPIFY.CUSTOMERS_ORDERS_LNK (
+	CUST_ORD_LNK_HK BINARY(8388608) NOT NULL,
+	CUSTOMERS_HK BINARY(8388608),
+	ORDERS_HK BINARY(8388608),
+	LDTS TIMESTAMP_NTZ(9),
+	SOURCE_SYSTEM VARCHAR(50),
+	constraint PK_CUSTOMERS_ORDERS_LNK primary key (CUST_ORD_LNK_HK),
+	constraint FK1_CUSTOMERS_ORDERS_LNK foreign key (CUSTOMERS_HK) references BREEZY.B_DV_SHOPIFY.CUSTOMERS_HUB(CUSTOMERS_HK),
+	constraint FK2_CUSTOMERS_ORDERS_LNK foreign key (ORDERS_HK) references BREEZY.B_DV_SHOPIFY.ORDERS_HUB(ORDERS_HK)
+);
+-----------------------------------------------------------------------------------------------------------------
+create or replace TABLE BREEZY.B_DV_SHOPIFY.CUSTOMER_ADDRESS_LNK (
+	CUST_ORD_LNK_HK BINARY(8388608) NOT NULL,
+	CUSTOMERS_ADDRESS_HK BINARY(8388608),
+	CUSTOMERS_HK BINARY(8388608),
+	LDTS TIMESTAMP_NTZ(9),
+	SOURCE_SYSTEM VARCHAR(50),
+	constraint PK_CUSTOMER_ADDRESS_LNK primary key (CUST_ORD_LNK_HK),
+	constraint FK1_CUSTOMER_ADDRESS_LNK foreign key (CUSTOMERS_ADDRESS_HK) references BREEZY.B_DV_SHOPIFY.CUSTOMER_ADDRESSES_HUB(CUSTOMERS_ADDRESS_HK),
+	constraint FK2_CUSTOMER_ADDRESS_LNK foreign key (CUSTOMERS_HK) references BREEZY.B_DV_SHOPIFY.CUSTOMERS_HUB(CUSTOMERS_HK)
+);
+-----------------------------------------------------------------------------------------------------------------
+create or replace TABLE BREEZY.B_DV_SHOPIFY.ORDER_TRANSACTION_LNK (
+	ORD_TRAN_LNK_HK BINARY(8388608) NOT NULL,
+	TRANSACTIONS_HK BINARY(8388608),
+	ORDERS_HK BINARY(8388608),
+	LDTS TIMESTAMP_NTZ(9),
+	SOURCE_SYSTEM VARCHAR(50),
+	constraint PK_ORDER_TRANSACTION_LNK primary key (ORD_TRAN_LNK_HK),
+	constraint FK1_ORDER_TRANSACTION_LNK foreign key (TRANSACTIONS_HK) references BREEZY.B_DV_SHOPIFY.ORDER_TRANSACTIONS_HUB(TRANSACTIONS_HK),
+	constraint FK2_ORDER_TRANSACTION_LNK foreign key (ORDERS_HK) references BREEZY.B_DV_SHOPIFY.ORDERS_HUB(ORDERS_HK)
+);
+-----------------------------------------------------------------------------------------------------------------
+create or replace TABLE BREEZY.B_DV_SHOPIFY.ORD_LINE_VAR_PROD_LNK (
+	ORD_LINE_VAR_PROD_LNK_HK BINARY(8388608) NOT NULL,
+	LINE_ITEMS_HK BINARY(8388608),
+	ORDERS_HK BINARY(8388608),
+	PRODUCTS_HK BINARY(8388608),
+	VARIANTS_HK BINARY(8388608),
+	LDTS TIMESTAMP_NTZ(9),
+	SOURCE_SYSTEM VARCHAR(50),
+	constraint PK_ORD_LINE_VAR_PROD_LNK primary key (ORD_LINE_VAR_PROD_LNK_HK),
+	constraint FK1_ORD_LINE_VAR_PROD_LNK foreign key (LINE_ITEMS_HK) references BREEZY.B_DV_SHOPIFY.ORDERS_LINE_ITEMS_HUB(LINE_ITEMS_HK),
+	constraint FK2_ORD_LINE_VAR_PROD_LNK foreign key (ORDERS_HK) references BREEZY.B_DV_SHOPIFY.ORDERS_HUB(ORDERS_HK),
+	constraint FK3_ORD_LINE_VAR_PROD_LNK foreign key (PRODUCTS_HK) references BREEZY.B_DV_SHOPIFY.PRODUCTS_HUB(PRODUCTS_HK),
+	constraint FK4_ORD_LINE_VAR_PROD_LNK foreign key (VARIANTS_HK) references BREEZY.B_DV_SHOPIFY.PRODUCTS_VARIANTS_HUB(VARIANTS_HK)
+);
+-----------------------------------------------------------------------------------------------------------------

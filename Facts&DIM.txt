@@ -1,0 +1,68 @@
+FACTS&DIMS
+
+create or replace view database.schema.DIM1_ORDERS_LINE_ITEMS as
+SELECT
+    TO_VARCHAR(HUB.LINE_ITEMS_HK)   AS DIM_LINE_ITEMS_KEY,
+    SAT.LDTS        AS EFFECTIVE_DTS,
+    HUB.LINE_ITEMS_ID    AS LINE_ITEMS_ID,
+    SAT.SOURCE_SYSTEM AS RECORD_SOURCE,
+    SAT.* EXCLUDE (LINE_ITEMS_HK, LDTS, SOURCE_SYSTEM, HASH_DIFF)
+FROM
+    schema.ORDERS_LINE_ITEMS_HUB HUB,
+    schema.CURR_VW_ORDERS_LINE_ITEMS_SAT SAT
+WHERE HUB.LINE_ITEMS_HK = SAT.LINE_ITEMS_HK;
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+create or replace view database.schema.DIM1_PRODUCTS as
+SELECT
+    TO_VARCHAR(HUB.PRODUCTS_HK)   AS DIM_PRODUCTS_KEY,
+    SAT.LDTS        AS EFFECTIVE_DTS,
+    HUB.PRODUCTS_ID    AS PRODUCTS_ID,
+    SAT.SOURCE_SYSTEM AS RECORD_SOURCE,
+    SAT.* EXCLUDE (PRODUCTS_HK, LDTS, SOURCE_SYSTEM, HASH_DIFF)
+FROM
+   schema.PRODUCTS_HUB HUB,
+    schema.CURR_VW_PRODUCTS_SAT SAT
+WHERE HUB.PRODUCTS_HK = SAT.PRODUCTS_HK;
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+create or replace view database.schema.DIM1_CUSTOMER_ADDRESSES as
+SELECT
+    TO_VARCHAR(HUB.CUSTOMERS_ADDRESS_HK)   AS DIM_CUSTOMER_ADDRESSES_KEY,
+    SAT.LDTS        AS EFFECTIVE_DTS,
+    HUB.CUSTOMERS_ADDRESS_ID   AS CUSTOMERS_ADDRESS_ID,
+    SAT.SOURCE_SYSTEM AS RECORD_SOURCE,
+    SAT.* EXCLUDE (CUSTOMERS_ADDRESS_HK, LDTS, SOURCE_SYSTEM, HASH_DIFF)
+FROM
+   schema.CUSTOMER_ADDRESSES_HUB HUB,
+    schema.CURR_VW_CUSTOMER_ADDRESSES_SAT SAT
+WHERE HUB.CUSTOMERS_ADDRESS_HK = SAT.CUSTOMERS_ADDRESS_HK;
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+create or replace view database.schema.DIM1_PRODUCTS_VARIANTS as
+SELECT
+    TO_VARCHAR(HUB.VARIANTS_HK)   AS DIM_PRODUCTS_VARIANTS_KEY,
+    SAT.LDTS        AS EFFECTIVE_DTS,
+    HUB.VARIANTS_ID    AS VARIANTS_ID,
+    SAT.SOURCE_SYSTEM AS RECORD_SOURCE,
+    SAT.* EXCLUDE (VARIANTS_HK, LDTS, SOURCE_SYSTEM, HASH_DIFF)
+FROM
+   schema.PRODUCTS_VARIANTS_HUB HUB,
+    schema.CURR_VW_PRODUCTS_VARIANTS_SAT SAT
+WHERE HUB.VARIANTS_HK = SAT.VARIANTS_HK;
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace view database.schema.FACT_TABLE(
+FCT_CUSTOMER_KEY,
+FCT_ORDER_KEY,
+FCT_TRANSACTIONS_KEY,
+FCT_CUSTOMERS_ADDRESS_KEY,
+FCT_LINE_ITEMS_KEY,
+FCT_PRODUCTS_KEY,
+FCT_VARIANTS_KEY) as
+select TO_VARCHAR(jn2.TRANSACTIONS_HK)AS FCT_TRANSACTIONS_KEY ,TO_VARCHAR(jn2.CUSTOMERS_HK)AS FCT_CUSTOMER_KEY,
+TO_VARCHAR(jn2.ORDERS_HK)AS FCT_ORDER_KEY,TO_VARCHAR(jn2.CUSTOMERS_ADDRESS_HK)AS FCT_CUSTOMERS_ADDRESS_KEY,TO_VARCHAR(olvp.LINE_ITEMS_HK)AS FCT_LINE_ITEMS_KEY,
+TO_VARCHAR(olvp.PRODUCTS_HK)AS FCT_PRODUCTS_KEY,TO_VARCHAR(olvp.VARIANTS_HK)AS FCT_VARIANTS_KEY from 
+(select ot.TRANSACTIONS_HK,jn1.CUSTOMERS_HK,jn1.ORDERS_HK,jn1.CUSTOMERS_ADDRESS_HK from 
+(select co.CUSTOMERS_HK,co.ORDERS_HK,ca.CUSTOMERS_ADDRESS_HK fromschema.Customers_Orders_LNK co
+join schema.Customer_Address_LNK ca on co.CUSTOMERS_HK=ca.CUSTOMERS_HK)jn1
+join schema.Order_Transaction_LNK ot on ot.ORDERS_HK=jn1.ORDERS_HK)jn2
+join schema.Ord_line_Var_prod_LNK olvp on olvp.ORDERS_HK=jn2.ORDERS_HK;
+---------------------------------------------------------------------------------------------------------------------------------------------------------------

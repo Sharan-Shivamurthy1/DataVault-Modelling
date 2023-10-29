@@ -1,0 +1,64 @@
+Shopify HUB
+
+HUB is a central concept that plays a significant role in organizing and managing data. It acts as a central  repository for core entities.
+It assigns a unique business key (usually a natural key) to each entity, allowing for easy tracking and integration.
+It also helps in Elimination of Redundancy,Data Lineage and Traceability etc.
+
+create or replace TABLE database.schema.CUSTOMERS_HUB (
+	CUSTOMERS_HK BINARY(8388608) NOT NULL,
+	CUSTOMERS_ID NUMBER(38,0),
+	SOURCE_SYSTEM VARCHAR(100),
+	LDTS TIMESTAMP_NTZ(9),
+	constraint PK_CUSTOMERS_HUB primary key (CUSTOMERS_HK)
+);
+-----------------------------------------------------------------------------------------------------------------
+
+create or replace TABLE database.schema.CUSTOMER_ADDRESSES_HUB (
+	CUSTOMERS_ADDRESS_HK BINARY(8388608) NOT NULL,
+	CUSTOMERS_ADDRESS_ID NUMBER(38,0),
+	SOURCE_SYSTEM VARCHAR(100),
+	LDTS TIMESTAMP_NTZ(9),
+	constraint PK_ADDRESS_HUB primary key (CUSTOMERS_ADDRESS_HK)
+);
+-----------------------------------------------------------------------------------------------------------------
+create or replace TABLE database.schema.ORDERS_HUB (
+	ORDERS_HK BINARY(8388608) NOT NULL,
+	ORDER_ID NUMBER(38,0),
+	SOURCE_SYSTEM VARCHAR(100),
+	LDTS TIMESTAMP_NTZ(9),
+	constraint PK_ORDERS_HUB primary key (ORDERS_HK)
+);
+-----------------------------------------------------------------------------------------------------------------
+create or replace TABLE database.schema.ORDERS_LINE_ITEMS_HUB (
+	LINE_ITEMS_HK BINARY(8388608) NOT NULL,
+	LINE_ITEMS_ID NUMBER(38,0),
+	SOURCE_SYSTEM VARCHAR(100),
+	LDTS TIMESTAMP_NTZ(9),
+	constraint PK_ORDERS_LINE_ITEMS_HUB primary key (LINE_ITEMS_HK)
+);
+-----------------------------------------------------------------------------------------------------------------
+create or replace TABLE database.schema.ORDER_TRANSACTIONS_HUB (
+	TRANSACTIONS_HK BINARY(8388608) NOT NULL,
+	TRANSACTIONS_ID NUMBER(38,0),
+	SOURCE_SYSTEM VARCHAR(100),
+	LDTS TIMESTAMP_NTZ(9),
+	constraint PK_ORDER_TRANSACTIONS_HUB primary key (TRANSACTIONS_HK)
+);
+-----------------------------------------------------------------------------------------------------------------
+create or replace TABLE database.schema.PRODUCTS_HUB (
+	PRODUCTS_HK BINARY(8388608) NOT NULL,
+	PRODUCTS_ID NUMBER(38,0),
+	SOURCE_SYSTEM VARCHAR(100),
+	LDTS TIMESTAMP_NTZ(9),
+	constraint PK_PRODUCTS_HUB primary key (PRODUCTS_HK)
+);
+-----------------------------------------------------------------------------------------------------------------
+
+create or replace TABLE database.schema.PRODUCTS_VARIANTS_HUB (
+	VARIANTS_HK BINARY(8388608) NOT NULL,
+	VARIANTS_ID NUMBER(38,0),
+	SOURCE_SYSTEM VARCHAR(100),
+	LDTS TIMESTAMP_NTZ(9),
+	constraint PK_PRODUCTS_VARIANTS_HUB primary key (VARIANTS_HK)
+);
+-----------------------------------------------------------------------------------------------------------------

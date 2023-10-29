@@ -1,0 +1,52 @@
+For the data in the landing zone, the streams are created . In streams, the ingested new rows are recorded as the offsets and hence the complete reload is avoided.
+
+create or replace stream CUSTOMERS_STRM on TABLE database.schema.CUSTOMERS;
+create or replace stream CUST_ADDRESS_STRM on TABLE database.schema.CUSTOMER_ADDRESSES ;
+create or replace stream ORDERS_STRM on TABLE database.schema.ORDERS ;
+create or replace stream ORD_LINE_ITEM_STRM on TABLE database.schema.ORDERS_LINE_ITEMS ;
+create or replace stream ORD_TRANSAC_STRM on TABLE database.schema.ORDER_TRANSACTIONS ;
+create or replace stream PRODUCT_STRM on TABLE database.schema.PRODUCTS ;
+create or replace stream PROD_VARIANT_STRM on TABLE database.schema.PRODUCTS_VARIANTS ;
+
+
+A view can also be created to do the same.
+
+create  or replace view database.schema.CUSTOMER_ADDRESSES_STRM_OUTBOUND as
+SELECT SRC.*,
+        sha1_binary(concat(CUSTOMER_ID,ADDRESS_ID,DEFAULT_ADDRESS)) AS CUSTOMER_ADDRESSES_HASH_DIFF
+        FROM CUST_ADDRESS_STRM SRC
+        ;
+--------------------------------------------------------------------------------------------------------        
+create or replace view database.schema.ORDERS_STRM_OUTBOUND as
+SELECT SRC.*,
+        sha1_binary(concat(ORDER_ID,UPDATED_AT)) AS ORDERS_HASH_DIFF
+        FROM ORDERS_STRM SRC
+        ;
+--------------------------------------------------------------------------------------------------------
+create or replace view database.schema.ORDERS_LINE_ITEMS_STRM_OUTBOUND as
+
+SELECT SRC.*,
+        sha1_binary(concat(LINE_ITEM_ID,ORDER_ID,VARIANT_ID,PRODUCT_ID)) AS ORDERS_LINE_ITEMS_HASH_DIFF
+        FROM ORD_LINE_ITEM_STRM SRC
+        ;
+--------------------------------------------------------------------------------------------------------
+create or replace view database.schema.ORDER_TRANSACTIONS_STRM_OUTBOUND as
+
+SELECT SRC.*,
+        sha1_binary(concat(TRANSACTION_ID,ORDER_ID,STATUS)) AS ORDER_TRANSACTIONS_HASH_DIFF
+        FROM ORD_TRANSAC_STRM SRC
+        ;
+--------------------------------------------------------------------------------------------------------
+create or replace view database.schema.PRODUCTS_STRM_OUTBOUND as
+SELECT SRC.*,
+        sha1_binary(concat(PRODUCT_ID,UPDATED_AT)) AS PRODUCTS_HASH_DIFF
+        FROM PRODUCT_STRM SRC
+        ;
+--------------------------------------------------------------------------------------------------------
+create or replace view database.schema.PRODUCTS_VARIANTS_STRM_OUTBOUND as
+
+SELECT SRC.*,
+        sha1_binary(concat(VARIANT_ID,UPDATED_AT)) AS PRODUCTS_VARIANTS_HASH_DIFF
+        FROM PROD_VARIANT_STRM SRC
+        ;
+--------------------------------------------------------------------------------------------------------
